@@ -71,5 +71,14 @@
             <version>1.16.4-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>com.janderup</groupId>
+            <artifactId>inventory</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/lib/InventoryGUI_Java1.8-BUILD-ALPHA.jar</systemPath>
+            <type>jar</type>
+            <optional>false</optional>
+        </dependency>
     </dependencies>
 </project>

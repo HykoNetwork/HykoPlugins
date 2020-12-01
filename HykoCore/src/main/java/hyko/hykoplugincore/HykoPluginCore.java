@@ -1,6 +1,8 @@
 package hyko.hykoplugincore;
 
+import hyko.hykoplugincore.commands.HubCommand;
 import hyko.hykoplugincore.commands.TestWorkingCommand;
+import hyko.hykoplugincore.commands.WarpCommand;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public final class HykoPluginCore extends Plugin {
@@ -12,6 +14,8 @@ public final class HykoPluginCore extends Plugin {
         getLogger().info("\n");
 
         getProxy().getPluginManager().registerCommand(this, new TestWorkingCommand());
+        getProxy().getPluginManager().registerCommand(this, new HubCommand());
+        getProxy().getPluginManager().registerCommand(this, new WarpCommand());
     }
 
     @Override

@@ -4,6 +4,8 @@ main: hyko.servercore.ServerCore
 api-version: 1.16
 authors: [ Paroxi ]
 description: Plugin for server-wide Hyko Servers.
+depend:
+  - InventoryAPI
 
 commands:
   testhub:
