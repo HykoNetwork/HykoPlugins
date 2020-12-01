@@ -1,0 +1,5 @@
+name: HykoPluginCore
+version: ${project.version}
+main: hyko.hykoplugincore.HykoPluginCore
+author: Paroxi
+description: The Bungee Cord network-wide plugin for Hyko Minecraft Network.

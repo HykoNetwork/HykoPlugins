@@ -1,0 +1,14 @@
+name: HykoServerCore
+version: ${project.version}
+main: hyko.servercore.ServerCore
+api-version: 1.16
+authors: [ Paroxi ]
+description: Plugin for server-wide Hyko Servers.
+
+commands:
+  testhub:
+    description: Checks if the hub-specific commands are functioning.
+  testcreative:
+    description: Checks if the creative-specific commands are functioning.
+  testgeneral:
+    description: Checks if the network/server-wide commands are functioning.
