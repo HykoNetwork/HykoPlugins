@@ -7,6 +7,7 @@ import com.janderup.inventory.api.InventoryItem;
 import com.janderup.inventory.api.InventoryListener;
 import hyko.servercore.ServerCore;
 import hyko.servercore.ServerID;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -32,7 +33,7 @@ public class GameSelectEvent implements Listener {
     @EventHandler
     public void event(PlayerInteractEvent e) {
         Player p = e.getPlayer();
-        if (ServerCore.isPlayerOnRequiredServer(p) != ServerID.HUB) {
+        if (ServerCore.getPlayerServerID(p) != ServerID.HUB) {
             return;
         }
         if (p.getInventory().getItemInMainHand().getType() == Material.COMPASS) {
@@ -52,7 +53,9 @@ public class GameSelectEvent implements Listener {
                 ItemMeta creativeServerItemMeta = creativeServer.getItemMeta();
                 assert creativeServerItemMeta != null;
                 creativeServerItemMeta.setDisplayName(ChatColor.DARK_GRAY + "- " + ChatColor.YELLOW + ChatColor.BOLD + "Creative" + ChatColor.DARK_GRAY + " -");
-                creativeServerItemMeta.setLore(Arrays.asList(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "-----------------------", ChatColor.GREEN + "Creative Server " + ChatColor.GOLD + "(1.16.4)", ChatColor.YELLOW + "Click to go to the creative server!", "\n", ChatColor.DARK_GRAY + "Build your ideas on your own private plot", ChatColor.DARK_GRAY + "and view other players builds.", "\n", ChatColor.GRAY + "# of Players: " + ChatColor.YELLOW + plugin.numOfPlayers[0], ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "-----------------------"));
+
+                creativeServerItemMeta.setLore(Arrays.asList(ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "-----------------------", ChatColor.GREEN + "Creative Server " + ChatColor.GOLD + "(1.16.4)", ChatColor.YELLOW + "Click to go to the creative server!", "\n", ChatColor.DARK_GRAY + "Build your ideas on your own private plot", ChatColor.DARK_GRAY + "and view other players builds.", "\n", ChatColor.GRAY + "Players Online: " + ChatColor.YELLOW + plugin.getPlayerCount(ServerID.CREATIVE), ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "-----------------------"));
+
                 creativeServer.setItemMeta(creativeServerItemMeta);
 
                 ItemStack comingSoon = new ItemStack(Material.GRAY_DYE);
@@ -78,7 +81,6 @@ public class GameSelectEvent implements Listener {
                 gameSelector.setItem(13, new InventoryItem(creativeServer, action -> {
                     action.setCancelled(true);
                     p.sendMessage(ChatColor.GREEN + "Going to Creative Server...");
-
                     ByteArrayDataOutput out = ByteStreams.newDataOutput();
                     out.writeUTF("Connect");
                     out.writeUTF("Creative");

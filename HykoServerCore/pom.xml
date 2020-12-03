@@ -80,5 +80,14 @@
             <type>jar</type>
             <optional>false</optional>
         </dependency>
+        <dependency>
+            <groupId>me.cedox</groupId>
+            <artifactId>api</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${pom.basedir}/lib/CoinsAPI_V2.jar</systemPath>
+            <type>jar</type>
+            <optional>false</optional>
+        </dependency>
     </dependencies>
 </project>

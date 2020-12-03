@@ -10,6 +10,11 @@ import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.UUID;
+
 public class HubCommand extends Command  {
 
     public HubCommand() {
@@ -24,6 +29,7 @@ public class HubCommand extends Command  {
                 p.sendMessage(new ComponentBuilder("You are already connected to the Hub!").color(ChatColor.RED).create());
                 return;
             }
+
             ServerInfo target = ProxyServer.getInstance().getServerInfo("Hub");
             p.connect(target);
         }else{

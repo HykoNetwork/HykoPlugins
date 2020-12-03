@@ -24,7 +24,7 @@ public class HubJoinEvent implements Listener {
     public void event(PlayerJoinEvent e) {
 
         Player p = e.getPlayer();
-        if (ServerCore.isPlayerOnRequiredServer(p) != ServerID.HUB) {
+        if (ServerCore.getPlayerServerID(p) != ServerID.HUB) {
             return;
         }
         p.setHealth(20);
@@ -41,7 +41,7 @@ public class HubJoinEvent implements Listener {
         ItemStack gameSelector = new ItemStack(Material.COMPASS);
         ItemMeta gameSelectorMeta = gameSelector.getItemMeta();
         assert gameSelectorMeta != null;
-        gameSelectorMeta.setDisplayName(ChatColor.GREEN + "Game Selector");
+        gameSelectorMeta.setDisplayName(ChatColor.GREEN + "Game Selector" + ChatColor.GRAY + " (Right Click)");
         gameSelectorMeta.setLore(Collections.singletonList(ChatColor.GRAY + "Right-Click to open game selector."));
         gameSelectorMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
         gameSelector.setItemMeta(gameSelectorMeta);

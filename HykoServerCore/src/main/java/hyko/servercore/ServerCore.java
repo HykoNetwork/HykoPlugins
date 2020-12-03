@@ -4,19 +4,27 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import hyko.servercore.commands.Creative.testcreative;
+import hyko.servercore.commands.General.NetworkCoins.NCoins;
+import hyko.servercore.commands.General.ReloadConfig;
 import hyko.servercore.commands.General.testgeneral;
 import hyko.servercore.commands.Hub.testhub;
+import hyko.servercore.config.ConfigManager;
 import hyko.servercore.events.Hub.GameSelectEvent;
 import hyko.servercore.events.Hub.HubJoinEvent;
+import hyko.servercore.events.Hub.PlayerJoinMessageEvent;
+import hyko.servercore.events.Hub.PlayerLeaveMessageEvent;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+
+import java.util.HashMap;
 
 public final class ServerCore extends JavaPlugin implements PluginMessageListener {
 
     // Number of players on each server
     // 0 = Creative
-    public int[] numOfPlayers = new int[1];
+    private int playerAmountCreative = 0;
+
 
     /**
      * Sends back the server-id the player is on.
@@ -24,12 +32,12 @@ public final class ServerCore extends JavaPlugin implements PluginMessageListene
      * @param p
      * @return
      */
-    public static ServerID isPlayerOnRequiredServer(Player p) {
-        if(p.getServer().getPort() == 25566) {
+    public static ServerID getPlayerServerID(Player p) {
+        if (p.getServer().getPort() == 25566) {
             return ServerID.HUB;
-        }else if(p.getServer().getPort() == 25567) {
+        } else if (p.getServer().getPort() == 25567) {
             return ServerID.CREATIVE;
-        }else{
+        } else {
             return ServerID.NULL;
         }
     }
@@ -42,6 +50,9 @@ public final class ServerCore extends JavaPlugin implements PluginMessageListene
 
         this.getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord");
         this.getServer().getMessenger().registerIncomingPluginChannel(this, "BungeeCord", this);
+
+        ConfigManager messagesFile = new ConfigManager(this, "messages.yml");
+        saveResource("messages.yml", false);
     }
 
     @Override
@@ -50,14 +61,18 @@ public final class ServerCore extends JavaPlugin implements PluginMessageListene
     }
 
     private void registerCommands() {
-        getCommand("testgeneral").setExecutor(new testgeneral());
-        getCommand("testhub").setExecutor(new testhub());
-        getCommand("testcreative").setExecutor(new testcreative());
+        getCommand("testgeneral").setExecutor(new testgeneral(this));
+        getCommand("testhub").setExecutor(new testhub(this));
+        getCommand("testcreative").setExecutor(new testcreative(this));
+        getCommand("hykoreload").setExecutor(new ReloadConfig(this));
+        getCommand("ncoins").setExecutor(new NCoins(this));
     }
 
     private void registerEvents() {
         getServer().getPluginManager().registerEvents(new HubJoinEvent(), this);
         getServer().getPluginManager().registerEvents(new GameSelectEvent(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerJoinMessageEvent(this), this);
+        getServer().getPluginManager().registerEvents(new PlayerLeaveMessageEvent(this), this);
     }
 
     @Override
@@ -73,9 +88,17 @@ public final class ServerCore extends JavaPlugin implements PluginMessageListene
             String server = in.readUTF();
             int playerCount = in.readInt();
 
-            numOfPlayers[0] = playerCount;
+            playerAmountCreative = playerCount;
         }
+    }
 
+    public int getPlayerCount(ServerID type) {
+        switch(type) {
+            case CREATIVE:
+                return playerAmountCreative;
+            default:
+                return -1;
+        }
     }
 
     public void getCount(Player player, String server) {

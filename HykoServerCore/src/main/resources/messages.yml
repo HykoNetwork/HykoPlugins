@@ -1,0 +1,6 @@
+# messages file for Hyko Server Core.
+# Use & color codes.
+badSender: '&e[HykoNetworkCore] &cPlease execute this command in game!'
+badPermission: '&e[HykoNetwork] &cYou do not have access to perform this command.'
+badServer_Hub: '&e[HykoNetwork] &cYou must be on the Hub Server to execute this command.'
+badServer_Creative: '&e[HykoNetwork] &cYou must be on the creative server to execute this command.'

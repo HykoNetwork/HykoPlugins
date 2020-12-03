@@ -6,6 +6,7 @@ authors: [ Paroxi ]
 description: Plugin for server-wide Hyko Servers.
 depend:
   - InventoryAPI
+  - API
 
 commands:
   testhub:
@@ -14,3 +15,8 @@ commands:
     description: Checks if the creative-specific commands are functioning.
   testgeneral:
     description: Checks if the network/server-wide commands are functioning.
+  hykoreload:
+    description: Reload the configuration file.
+  ncoins:
+    description: Manipulate Network Coins for players.
+    aliases: [coin, coins, networkcoins, hykocoins]
