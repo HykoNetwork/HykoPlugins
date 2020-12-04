@@ -17,6 +17,3 @@ commands:
     description: Checks if the network/server-wide commands are functioning.
   hykoreload:
     description: Reload the configuration file.
-  ncoins:
-    description: Manipulate Network Coins for players.
-    aliases: [coin, coins, networkcoins, hykocoins]

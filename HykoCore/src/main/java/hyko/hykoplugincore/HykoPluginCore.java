@@ -1,5 +1,7 @@
 package hyko.hykoplugincore;
 
+import hyko.hykoplugincore.SQL.SQLManager;
+import hyko.hykoplugincore.SQL.TableType;
 import hyko.hykoplugincore.commands.*;
 import hyko.hykoplugincore.commands.friends.FriendCommand;
 import hyko.hykoplugincore.commands.friends.FriendsCommand;
@@ -14,14 +16,18 @@ import net.md_5.bungee.config.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.SQLException;
 
 public final class HykoPluginCore extends Plugin {
 
     public static File file;
     public static Configuration configuration;
+    public static HykoPluginCore instance;
+    public static SQLManager playerDatabase;
 
     @Override
     public void onEnable() {
+        instance = this;
         getLogger().info("\n");
         getLogger().info("Hyko Network Plugin Core (1.16.4) has officially loaded successfully.");
         getLogger().info("\n");
@@ -49,11 +55,18 @@ public final class HykoPluginCore extends Plugin {
         }
         try {
             configuration = ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
-
             ConfigurationProvider.getProvider(YamlConfiguration.class).save(configuration, file);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        playerDatabase = new SQLManager("manager.aquatis.host", "Interryne_HykoBungeePlayers", "Interryne", "1162dover");
+        playerDatabase.getConnection(); // Connect
+        playerDatabase.createDatabase(TableType.PLAYER_DATABASE);
+    }
+
+    public static HykoPluginCore getInstance() {
+        return instance;
     }
 
     @Override
@@ -61,5 +74,10 @@ public final class HykoPluginCore extends Plugin {
         getLogger().info("\n");
         getLogger().info("Hyko Network Plugin Core (1.16.4) has officially been disabled successfully.");
         getLogger().info("\n");
+        try {
+            playerDatabase.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 }

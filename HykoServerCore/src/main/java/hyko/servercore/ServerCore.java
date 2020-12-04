@@ -4,20 +4,14 @@ import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import hyko.servercore.commands.Creative.testcreative;
-import hyko.servercore.commands.General.NetworkCoins.NCoins;
 import hyko.servercore.commands.General.ReloadConfig;
 import hyko.servercore.commands.General.testgeneral;
 import hyko.servercore.commands.Hub.testhub;
 import hyko.servercore.config.ConfigManager;
-import hyko.servercore.events.Hub.GameSelectEvent;
-import hyko.servercore.events.Hub.HubJoinEvent;
-import hyko.servercore.events.Hub.PlayerJoinMessageEvent;
-import hyko.servercore.events.Hub.PlayerLeaveMessageEvent;
+import hyko.servercore.events.Hub.*;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
-
-import java.util.HashMap;
 
 public final class ServerCore extends JavaPlugin implements PluginMessageListener {
 
@@ -53,6 +47,8 @@ public final class ServerCore extends JavaPlugin implements PluginMessageListene
 
         ConfigManager messagesFile = new ConfigManager(this, "messages.yml");
         saveResource("messages.yml", false);
+        ConfigManager playersFile = new ConfigManager(this, "players.yml");
+        saveResource("players.yml", false);
     }
 
     @Override
@@ -65,7 +61,6 @@ public final class ServerCore extends JavaPlugin implements PluginMessageListene
         getCommand("testhub").setExecutor(new testhub(this));
         getCommand("testcreative").setExecutor(new testcreative(this));
         getCommand("hykoreload").setExecutor(new ReloadConfig(this));
-        getCommand("ncoins").setExecutor(new NCoins(this));
     }
 
     private void registerEvents() {
