@@ -1,6 +1,6 @@
 package hyko.servercore.SQL;
 
-import hyko.hykoplugincore.HykoPluginCore;
+import hyko.servercore.ServerCore;
 import sun.tools.jconsole.Tab;
 
 import java.sql.*;
@@ -13,6 +13,7 @@ public class SQLManager {
     private String databaseUserName;
     private String databasePassword;
     private Connection c;
+    private final ServerCore HykoPluginCore;
 
 
     /**
@@ -23,11 +24,12 @@ public class SQLManager {
      * @param databaseUserName
      * @param databasePassword
      */
-    public SQLManager(String databaseHost, String databaseName, String databaseUserName, String databasePassword) {
+    public SQLManager(ServerCore plugin, String databaseHost, String databaseName, String databaseUserName, String databasePassword) {
         this.databaseHost = databaseHost;
         this.databaseName = databaseName;
         this.databaseUserName = databaseUserName;
         this.databasePassword = databasePassword;
+        HykoPluginCore = plugin;
     }
 
 
@@ -64,7 +66,7 @@ public class SQLManager {
     }
 
     public Connection getConnection() {
-        HykoPluginCore.getInstance().getLogger().info("[HykoCore] Attempting to connect to MySQL.");
+        HykoPluginCore.getLogger().info("[HykoCore] Attempting to connect to MySQL.");
         try {
             c = DriverManager.getConnection(
                     "jdbc:mysql://" + databaseHost + ":3306/" +
@@ -73,11 +75,11 @@ public class SQLManager {
                     databaseUserName,
                     databasePassword);
         } catch (SQLException throwables) {
-            HykoPluginCore.getInstance().getLogger().info("[HykoCore] Failed to connect to MySQL!");
+            HykoPluginCore.getLogger().info("[HykoCore] Failed to connect to MySQL!");
             throwables.printStackTrace();
         }
         if(c!=null) {
-            HykoPluginCore.getInstance().getLogger().info("[HykoCore] Connected to MySQL!");
+            HykoPluginCore.getLogger().info("[HykoCore] Connected to MySQL!");
         }
         return c;
 
@@ -94,12 +96,12 @@ public class SQLManager {
             } catch (SQLException throwables) {
                 getConnection();
                 throwables.printStackTrace();
-                HykoPluginCore.getInstance().getLogger().info("Could not create database. Error in SQL Syntax?");
+                HykoPluginCore.getLogger().info("Could not create database. Error in SQL Syntax?");
                 return;
             }
-            HykoPluginCore.getInstance().getLogger().info("Database found and/or created.?");
+            HykoPluginCore.getLogger().info("Database found and/or created.?");
         }
-        HykoPluginCore.getInstance().getLogger().info("Could not create table of type " + type.toString());
+        HykoPluginCore.getLogger().info("Could not create table of type " + type.toString());
     }
 
     public ResultSet getResult(String qry) {
@@ -138,18 +140,9 @@ public class SQLManager {
 
     }
 
-
-
-
-
-    public static void close(Connection connection) throws SQLException {
-        connection.close();
-        HykoPluginCore.getInstance().getLogger().info("[HykoCore] Disconnected from MySQL.");
-    }
-
     public void close() throws SQLException {
         c.close();
-        HykoPluginCore.getInstance().getLogger().info("[HykoCore] Disconnected from MySQL.");
+        HykoPluginCore.getLogger().info("[HykoCore] Disconnected from MySQL.");
     }
 
 }

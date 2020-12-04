@@ -7,7 +7,7 @@ import hyko.hykoplugincore.commands.friends.FriendCommand;
 import hyko.hykoplugincore.commands.friends.FriendsCommand;
 import hyko.hykoplugincore.events.NetworkQuitEvent;
 import hyko.hykoplugincore.events.ServerJoinEvent;
-import hyko.hykoplugincore.events.SetupFriendEvent;
+import hyko.hykoplugincore.events.SetupJoinEvent;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.plugin.Plugin;
 import net.md_5.bungee.config.Configuration;
@@ -40,7 +40,7 @@ public final class HykoPluginCore extends Plugin {
         getProxy().getPluginManager().registerCommand(this, new OpMeCommand());
         getProxy().getPluginManager().registerCommand(this, new FriendCommand());
         getProxy().getPluginManager().registerCommand(this, new FriendsCommand());
-        getProxy().getPluginManager().registerListener(this, new SetupFriendEvent());
+        getProxy().getPluginManager().registerListener(this, new SetupJoinEvent());
         getProxy().getPluginManager().registerListener(this, new ServerJoinEvent());
         getProxy().getPluginManager().registerListener(this, new NetworkQuitEvent());
 

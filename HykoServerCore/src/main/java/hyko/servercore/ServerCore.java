@@ -3,7 +3,10 @@ package hyko.servercore;
 import com.google.common.io.ByteArrayDataInput;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import hyko.servercore.SQL.SQLManager;
+import hyko.servercore.SQL.TableType;
 import hyko.servercore.commands.Creative.testcreative;
+import hyko.servercore.commands.General.NetworkCurrency.Coins;
 import hyko.servercore.commands.General.ReloadConfig;
 import hyko.servercore.commands.General.testgeneral;
 import hyko.servercore.commands.Hub.testhub;
@@ -18,6 +21,7 @@ public final class ServerCore extends JavaPlugin implements PluginMessageListene
     // Number of players on each server
     // 0 = Creative
     private int playerAmountCreative = 0;
+    public static SQLManager playerDatabase;
 
 
     /**
@@ -47,8 +51,10 @@ public final class ServerCore extends JavaPlugin implements PluginMessageListene
 
         ConfigManager messagesFile = new ConfigManager(this, "messages.yml");
         saveResource("messages.yml", false);
-        ConfigManager playersFile = new ConfigManager(this, "players.yml");
-        saveResource("players.yml", false);
+
+        playerDatabase = new SQLManager(this,"manager.aquatis.host", "Interryne_HykoBungeePlayers", "Interryne", "1162dover");
+        playerDatabase.getConnection();
+        playerDatabase.createDatabase(TableType.PLAYER_DATABASE);
     }
 
     @Override
@@ -61,6 +67,7 @@ public final class ServerCore extends JavaPlugin implements PluginMessageListene
         getCommand("testhub").setExecutor(new testhub(this));
         getCommand("testcreative").setExecutor(new testcreative(this));
         getCommand("hykoreload").setExecutor(new ReloadConfig(this));
+        getCommand("coins").setExecutor(new Coins(this));
     }
 
     private void registerEvents() {

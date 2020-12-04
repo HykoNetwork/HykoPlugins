@@ -8,7 +8,11 @@ import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
-public class SetupFriendEvent implements Listener {
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.UUID;
+
+public class SetupJoinEvent implements Listener {
 
     @EventHandler
     public void event(PostLoginEvent e) {
@@ -22,9 +26,9 @@ public class SetupFriendEvent implements Listener {
          * This will solve the issue of a player on creative checking a player on hubs currency even if the player on hub has never logged in on creative.
          */
 
-        if(!HykoPluginCore.playerDatabase.playerExists(e.getPlayer().getName())) {
+        if(!playerExists(HykoPluginCore.playerDatabase, e.getPlayer().getName())) {
             HykoPluginCore.getInstance().getLogger().info("Player " + e.getPlayer().getName() + " does not exist in SQL database... Adding!");
-            HykoPluginCore.playerDatabase.addPlayerToDatabase(e.getPlayer().getName(), e.getPlayer().getUniqueId());
+            addPlayerToDatabase(HykoPluginCore.playerDatabase, e.getPlayer().getName(), e.getPlayer().getUniqueId());
             HykoPluginCore.getInstance().getLogger().info("Success! Player " + e.getPlayer().getName() + " added to database!");
         }
 
@@ -34,5 +38,31 @@ public class SetupFriendEvent implements Listener {
 
 
 
+    }
+
+    /**
+     * SPECIFIC METHOD TO TableType.PLAYER_DATABASE
+     */
+    public void addPlayerToDatabase(SQLManager manager, String name, UUID uuid) {
+        manager.update("INSERT INTO " + manager.getDatabaseName() + "(PLAYER_NAME, UUID) VALUES ('" + name + "', '" + uuid.toString() + "');");
+    }
+
+    /**
+     * Checks the database to see if the player of name exists.
+     * @param name
+     * @return
+     */
+    public boolean playerExists(SQLManager manager, String name) {
+
+        try {
+            ResultSet rs = manager.getResult("SELECT * FROM " +
+                    manager.getDatabaseName() + " WHERE PLAYER_NAME= '" + name +
+                    "'");
+            if (rs.next())
+                return (rs.getString("UUID") != null);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
