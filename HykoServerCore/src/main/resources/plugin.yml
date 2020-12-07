@@ -19,3 +19,7 @@ commands:
     description: Reload the configuration file.
   coins:
     description: Manager network-wide currency.
+  currencyinfo:
+    description: To be executed from console.
+  hotbarmessage:
+    description: server-side.

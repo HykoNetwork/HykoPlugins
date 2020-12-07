@@ -1,4 +1,4 @@
-package hyko.servercore.SQL;
+package hyko.hykoplugincore.SQL;
 
 import hyko.hykoplugincore.HykoPluginCore;
 import sun.tools.jconsole.Tab;
@@ -83,13 +83,13 @@ public class SQLManager {
 
     }
 
-    public void createDatabase(TableType type) {
+    public void createDatabase(String name, TableType type) {
         if(c==null) {
             return;
         }
         if (type == TableType.PLAYER_DATABASE) {
             try {
-                PreparedStatement create = getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS " + databaseName + "(PLAYER_NAME VARCHAR(100), UUID VARCHAR(100))");
+                PreparedStatement create = getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS " + name + "(PLAYER_NAME VARCHAR(100), UUID VARCHAR(100))");
                 create.executeUpdate();
             } catch (SQLException throwables) {
                 getConnection();

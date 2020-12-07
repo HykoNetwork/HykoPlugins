@@ -27,9 +27,9 @@ public class SetupJoinEvent implements Listener {
          */
 
         if(!playerExists(HykoPluginCore.playerDatabase, e.getPlayer().getName())) {
-            HykoPluginCore.getInstance().getLogger().info("Player " + e.getPlayer().getName() + " does not exist in SQL database... Adding!");
+            //HykoPluginCore.getInstance().getLogger().info("Player " + e.getPlayer().getName() + " does not exist in SQL database... Adding!");
             addPlayerToDatabase(HykoPluginCore.playerDatabase, e.getPlayer().getName(), e.getPlayer().getUniqueId());
-            HykoPluginCore.getInstance().getLogger().info("Success! Player " + e.getPlayer().getName() + " added to database!");
+           // HykoPluginCore.getInstance().getLogger().info("Success! Player " + e.getPlayer().getName() + " added to database!");
         }
 
         if(HykoPluginCore.configuration.get("friends." + e.getPlayer().getUniqueId())== null) {
@@ -44,8 +44,9 @@ public class SetupJoinEvent implements Listener {
      * SPECIFIC METHOD TO TableType.PLAYER_DATABASE
      */
     public void addPlayerToDatabase(SQLManager manager, String name, UUID uuid) {
-        manager.update("INSERT INTO " + manager.getDatabaseName() + "(PLAYER_NAME, UUID) VALUES ('" + name + "', '" + uuid.toString() + "');");
+        manager.update("INSERT INTO " + "hyko_player_logger" + "(PLAYER_NAME, UUID) VALUES ('" + name + "', '" + uuid.toString() + "');");
     }
+
 
     /**
      * Checks the database to see if the player of name exists.
@@ -56,7 +57,7 @@ public class SetupJoinEvent implements Listener {
 
         try {
             ResultSet rs = manager.getResult("SELECT * FROM " +
-                    manager.getDatabaseName() + " WHERE PLAYER_NAME= '" + name +
+                    "hyko_player_logger" + " WHERE PLAYER_NAME= '" + name +
                     "'");
             if (rs.next())
                 return (rs.getString("UUID") != null);

@@ -6,7 +6,9 @@ import com.google.common.io.ByteStreams;
 import hyko.servercore.SQL.SQLManager;
 import hyko.servercore.SQL.TableType;
 import hyko.servercore.commands.Creative.testcreative;
+import hyko.servercore.commands.General.HotbarMessage;
 import hyko.servercore.commands.General.NetworkCurrency.Coins;
+import hyko.servercore.commands.General.NetworkCurrency.CurrencyInfoCommand;
 import hyko.servercore.commands.General.ReloadConfig;
 import hyko.servercore.commands.General.testgeneral;
 import hyko.servercore.commands.Hub.testhub;
@@ -16,12 +18,17 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
 public final class ServerCore extends JavaPlugin implements PluginMessageListener {
 
     // Number of players on each server
     // 0 = Creative
     private int playerAmountCreative = 0;
     public static SQLManager playerDatabase;
+    public static ArrayList<UUID> playersUsingCurrencyInfo = new ArrayList<UUID>();
+
 
 
     /**
@@ -52,9 +59,9 @@ public final class ServerCore extends JavaPlugin implements PluginMessageListene
         ConfigManager messagesFile = new ConfigManager(this, "messages.yml");
         saveResource("messages.yml", false);
 
-        playerDatabase = new SQLManager(this,"manager.aquatis.host", "Interryne_HykoBungeePlayers", "Interryne", "1162dover");
+        playerDatabase = new SQLManager(this, "185.236.137.201", "mc78201", "mc78201", "189678353c");
         playerDatabase.getConnection();
-        playerDatabase.createDatabase(TableType.PLAYER_DATABASE);
+        playerDatabase.createDatabase("hyko_player_logger", TableType.PLAYER_DATABASE);
     }
 
     @Override
@@ -68,6 +75,8 @@ public final class ServerCore extends JavaPlugin implements PluginMessageListene
         getCommand("testcreative").setExecutor(new testcreative(this));
         getCommand("hykoreload").setExecutor(new ReloadConfig(this));
         getCommand("coins").setExecutor(new Coins(this));
+        getCommand("currencyinfo").setExecutor(new CurrencyInfoCommand(this));
+        getCommand("hotbarmessage").setExecutor(new HotbarMessage());
     }
 
     private void registerEvents() {
@@ -75,6 +84,7 @@ public final class ServerCore extends JavaPlugin implements PluginMessageListene
         getServer().getPluginManager().registerEvents(new GameSelectEvent(this), this);
         getServer().getPluginManager().registerEvents(new PlayerJoinMessageEvent(this), this);
         getServer().getPluginManager().registerEvents(new PlayerLeaveMessageEvent(this), this);
+        //getServer().getPluginManager().registerEvents(new TransferPlayerCurrencyEvent(), this);
     }
 
     @Override
