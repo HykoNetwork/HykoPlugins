@@ -7,7 +7,6 @@ import de.simonsator.partyandfriends.api.party.PartyManager;
 import hyko.hykoplugincore.SQL.SQLManager;
 import hyko.hykoplugincore.SQL.TableType;
 import hyko.hykoplugincore.commands.*;
-import hyko.hykoplugincore.commands.PartyAndFriends.TestPartyCommand;
 import hyko.hykoplugincore.events.NetworkQuitEvent;
 import hyko.hykoplugincore.events.ServerJoinEvent;
 import hyko.hykoplugincore.events.SetupJoinEvent;
@@ -36,6 +35,7 @@ public final class HykoPluginCore extends Plugin {
     public static Configuration configuration;
     public static HykoPluginCore instance;
     public static SQLManager playerDatabase;
+    public static SQLManager staffRankDatabase;
 
     @Override
     public void onEnable() {
@@ -45,7 +45,6 @@ public final class HykoPluginCore extends Plugin {
         getLogger().info("\n");
 
         getProxy().getPluginManager().registerCommand(this, new TestWorkingCommand());
-        getProxy().getPluginManager().registerCommand(this, new TestPartyCommand());
         getProxy().getPluginManager().registerCommand(this, new HubCommand());
         getProxy().getPluginManager().registerCommand(this, new WarpCommand());
         getProxy().getPluginManager().registerCommand(this, new ApplyCommand());
@@ -55,6 +54,10 @@ public final class HykoPluginCore extends Plugin {
         getProxy().getPluginManager().registerListener(this, new SetupJoinEvent());
         getProxy().getPluginManager().registerListener(this, new ServerJoinEvent());
         getProxy().getPluginManager().registerListener(this, new NetworkQuitEvent());
+        getProxy().getPluginManager().registerCommand(this, new PortCommand());
+        getProxy().getPluginManager().registerCommand(this, new ProxyKickCommand());
+        getProxy().getPluginManager().registerCommand(this, new StaffChatCommand());
+        getProxy().getPluginManager().registerCommand(this, new RankCommand());
         file = new File(ProxyServer.getInstance().getPluginsFolder() + "/data.yml");
 
         if(!file.exists()) {
@@ -74,6 +77,10 @@ public final class HykoPluginCore extends Plugin {
         playerDatabase = new SQLManager("185.236.137.201", "mc78201", "mc78201", "189678353c");
         playerDatabase.getConnection(); // Connect
         playerDatabase.createDatabase("hyko_player_logger", TableType.PLAYER_DATABASE);
+
+        staffRankDatabase = new SQLManager("185.236.137.201", "mc78201", "mc78201", "189678353c");
+        staffRankDatabase.getConnection(); // Connect
+        staffRankDatabase.createDatabase("hyko_staff", TableType.STAFF_DATABASE);
 
         addPartyProxyCoins();
     }
@@ -104,10 +111,10 @@ public final class HykoPluginCore extends Plugin {
      * Testing = 20 Seconds
      * Real Time = 10 Minutes
      */
-    private void addPartyProxyCoins() {
+    private  void addPartyProxyCoins() {
         final int DEFAULT_COINS = 6;
         final float PARTY_BONUS = 1.25F;
-
+        //TODO: Eventually take off main thread
         HykoPluginCore.getInstance().getProxy().getScheduler().schedule(HykoPluginCore.getInstance(), () -> {
             for(ProxiedPlayer p: ProxyServer.getInstance().getPlayers()) {
                 p.getUniqueId();

@@ -98,6 +98,16 @@ public class SQLManager {
                 return;
             }
             HykoPluginCore.getInstance().getLogger().info("Database found and/or created.?");
+        }else if(type == TableType.STAFF_DATABASE) {
+            try {
+                PreparedStatement create = getConnection().prepareStatement("CREATE TABLE IF NOT EXISTS " + name + "(UUID VARCHAR(100), RANK VARCHAR(100))");
+                create.executeUpdate();
+            } catch (SQLException throwables) {
+                getConnection();
+                throwables.printStackTrace();
+                HykoPluginCore.getInstance().getLogger().info("Could not create database. Error in SQL Syntax?");
+                return;
+            }
         }
         HykoPluginCore.getInstance().getLogger().info("Could not create table of type " + type.toString());
     }

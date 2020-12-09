@@ -10,7 +10,7 @@ import net.md_5.bungee.api.plugin.Command;
 public class CleanMessageCommand extends Command {
 
     public CleanMessageCommand() {
-        super("cleanmessage", "hyko.cleanmessage");
+        super("cleanmessage", "hyko.admin");
     }
 
 

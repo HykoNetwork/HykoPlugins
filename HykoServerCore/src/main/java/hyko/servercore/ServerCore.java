@@ -14,12 +14,15 @@ import hyko.servercore.commands.General.testgeneral;
 import hyko.servercore.commands.Hub.testhub;
 import hyko.servercore.config.ConfigManager;
 import hyko.servercore.events.Hub.*;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.plugin.messaging.PluginMessageListener;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 public final class ServerCore extends JavaPlugin implements PluginMessageListener {
 
@@ -28,6 +31,7 @@ public final class ServerCore extends JavaPlugin implements PluginMessageListene
     private int playerAmountCreative = 0;
     public static SQLManager playerDatabase;
     public static ArrayList<UUID> playersUsingCurrencyInfo = new ArrayList<UUID>();
+
 
 
 
@@ -62,6 +66,13 @@ public final class ServerCore extends JavaPlugin implements PluginMessageListene
         playerDatabase = new SQLManager(this, "185.236.137.201", "mc78201", "mc78201", "189678353c");
         playerDatabase.getConnection();
         playerDatabase.createDatabase("hyko_player_logger", TableType.PLAYER_DATABASE);
+
+        BukkitScheduler scheduler = getServer().getScheduler();
+        scheduler.scheduleSyncRepeatingTask(this, () -> {
+            // Do something
+            Bukkit.getConsoleSender().sendMessage("Updating player counts.");
+            playerAmountCreative = getPlayerCount(ServerID.CREATIVE);
+        }, 0L, (3L * 20L) * 60L);
     }
 
     @Override
@@ -98,9 +109,8 @@ public final class ServerCore extends JavaPlugin implements PluginMessageListene
 
         if (subchannel.equals("PlayerCount")) {
             String server = in.readUTF();
-            int playerCount = in.readInt();
 
-            playerAmountCreative = playerCount;
+            playerAmountCreative = in.readInt();
         }
     }
 
