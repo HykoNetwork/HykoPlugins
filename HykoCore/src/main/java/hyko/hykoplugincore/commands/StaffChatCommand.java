@@ -23,28 +23,56 @@ public class StaffChatCommand extends Command {
     public void execute(CommandSender sender, String[] args) {
         if(sender instanceof ProxiedPlayer) {
             ProxiedPlayer p = (ProxiedPlayer) sender;
-            for(ProxiedPlayer onlinePlayer: ProxyServer.getInstance().getPlayers()) {
-                if(onlinePlayer.hasPermission("hyko.staff")) {
 
-                    TextComponent chatText = new TextComponent("[STAFF] " + p.getName() + ": ");
-                    chatText.setColor(ChatColor.AQUA);
+            TextComponent chatText = new TextComponent("[STAFF] ");
+            chatText.setColor(ChatColor.AQUA);
 
-                    StringBuilder message = new StringBuilder();
-                    for (String arg : args) {
-                        message.append(arg).append(" ");
-                    }
+            StringBuilder message = new StringBuilder();
+            for (String arg : args) {
+                message.append(arg).append(" ");
+            }
 
-                    TextComponent messageText = new TextComponent(ChatColor.translateAlternateColorCodes('&', message.toString()));
-                    chatText.addExtra(messageText);
+            TextComponent rankNameText = null;
+            try {
+                rankNameText = new TextComponent(getPlayerRank(HykoPluginCore.staffRankDatabase, p) + " " + ChatColor.YELLOW+ p.getName()+ChatColor.WHITE+": ");
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+            ChatMgr(chatText, message, rankNameText);
+        }else{
+            TextComponent chatText = new TextComponent("[STAFF] ");
+            chatText.setColor(ChatColor.AQUA);
 
+            StringBuilder message = new StringBuilder();
+            for (String arg : args) {
+                message.append(arg).append(" ");
+            }
 
+            TextComponent rankNameText = new TextComponent(ChatColor.LIGHT_PURPLE + "[CONSOLE]" +ChatColor.WHITE+": ");
 
-                    return;
+            ChatMgr(chatText, message, rankNameText);
+        }
+    }
 
+    private void ChatMgr(TextComponent chatText, StringBuilder message, TextComponent rankNameText) {
+        chatText.addExtra(rankNameText);
+        TextComponent messageText = new TextComponent(ChatColor.translateAlternateColorCodes('&', message.toString()));
+        chatText.addExtra(messageText);
 
-                }
+        for(ProxiedPlayer onlinePlayer: ProxyServer.getInstance().getPlayers()) {
+
+            if(onlinePlayer.hasPermission("hyko.staff")) {
+                onlinePlayer.sendMessage(chatText);
             }
         }
+    }
+
+    private String getPlayerRank(SQLManager manager, ProxiedPlayer p) throws SQLException {
+        ResultSet rs = manager.getResult("SELECT * FROM hyko_staff WHERE UUID='"+p.getUniqueId().toString()+"'");
+        if(rs.next()) {
+            return RANK.serialize(RANK.valueOf(rs.getString("RANK")));
+        }
+        return RANK.serialize(RANK.STAFF);
     }
 
 

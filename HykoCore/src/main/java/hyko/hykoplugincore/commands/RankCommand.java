@@ -128,4 +128,23 @@ enum RANK {
         }
     };
 
+    public static String serialize(RANK rank) {
+        switch(rank) {
+            case HELPER:
+                return ChatColor.GREEN.toString() + ChatColor.BOLD + "HELPER";
+            case MOD:
+                return ChatColor.DARK_GREEN.toString() + ChatColor.BOLD + "MOD";
+            case ADMIN:
+                return ChatColor.DARK_RED.toString() + ChatColor.BOLD + "ADMIN";
+            case DEVELOPER:
+                return ChatColor.BLUE.toString() + ChatColor.BOLD + "DEVELOPER";
+            case MANAGER:
+                return ChatColor.GOLD.toString() + ChatColor.BOLD + "MANAGER";
+            case OWNER:
+                return ChatColor.RED.toString() + ChatColor.BOLD + "OWNER";
+            default:
+                return ChatColor.GRAY.toString() + ChatColor.BOLD + "STAFF";
+        }
+    }
+
 }

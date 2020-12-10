@@ -1,14 +1,11 @@
 package hyko.hykoplugincore;
 
-import de.simonsator.partyandfriends.api.pafplayers.OnlinePAFPlayer;
 import de.simonsator.partyandfriends.api.pafplayers.PAFPlayerManager;
 import de.simonsator.partyandfriends.api.party.PartyAPI;
-import de.simonsator.partyandfriends.api.party.PartyManager;
 import hyko.hykoplugincore.SQL.SQLManager;
 import hyko.hykoplugincore.SQL.TableType;
 import hyko.hykoplugincore.commands.*;
 import hyko.hykoplugincore.events.NetworkQuitEvent;
-import hyko.hykoplugincore.events.ServerJoinEvent;
 import hyko.hykoplugincore.events.SetupJoinEvent;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.ProxyServer;
@@ -24,9 +21,6 @@ import net.md_5.bungee.config.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public final class HykoPluginCore extends Plugin {
@@ -52,7 +46,6 @@ public final class HykoPluginCore extends Plugin {
         getProxy().getPluginManager().registerCommand(this, new OpMeCommand());
         getProxy().getPluginManager().registerCommand(this, new CleanMessageCommand());
         getProxy().getPluginManager().registerListener(this, new SetupJoinEvent());
-        getProxy().getPluginManager().registerListener(this, new ServerJoinEvent());
         getProxy().getPluginManager().registerListener(this, new NetworkQuitEvent());
         getProxy().getPluginManager().registerCommand(this, new PortCommand());
         getProxy().getPluginManager().registerCommand(this, new ProxyKickCommand());
@@ -106,43 +99,48 @@ public final class HykoPluginCore extends Plugin {
         ProxyServer.getInstance().getPluginManager().dispatchCommand(ProxyServer.getInstance().getConsole(), cmd);
     }
 
+
     /**
      * Adds coins if players are in party.
      * Testing = 20 Seconds
      * Real Time = 10 Minutes
      */
-    private  void addPartyProxyCoins() {
+    private void addPartyProxyCoins() {
         final int DEFAULT_COINS = 6;
         final float PARTY_BONUS = 1.25F;
         //TODO: Eventually take off main thread
-        HykoPluginCore.getInstance().getProxy().getScheduler().schedule(HykoPluginCore.getInstance(), () -> {
+
+        final TextComponent messageParty = new TextComponent("+" + (int)(DEFAULT_COINS * PARTY_BONUS) + " Coins");
+        messageParty.setColor(ChatColor.GOLD);
+        final TextComponent partyBonus = new TextComponent(" (Party Bonus)");
+        partyBonus.setColor(ChatColor.GRAY);
+        messageParty.addExtra(partyBonus);
+        final int calculateParty = (int)(DEFAULT_COINS * PARTY_BONUS) - DEFAULT_COINS;
+        messageParty.setHoverEvent( new HoverEvent( HoverEvent.Action.SHOW_TEXT, new Text( ChatColor.GOLD + "+" + DEFAULT_COINS + " Coins (Playtime Bonus)\n" + ChatColor.GOLD + "+" + calculateParty + " Coins (Party Bonus)" ) ) );
+
+        final TextComponent message = new TextComponent("+" + (DEFAULT_COINS) + " Coins");
+        message.setColor(ChatColor.GOLD);
+        message.setHoverEvent( new HoverEvent( HoverEvent.Action.SHOW_TEXT, new Text( ChatColor.GOLD + "+" + DEFAULT_COINS + " Coins (Playtime Bonus)" ) ) );
+
+        getProxy().getScheduler().schedule(HykoPluginCore.getInstance(), () -> {
             for(ProxiedPlayer p: ProxyServer.getInstance().getPlayers()) {
-                p.getUniqueId();
-                if(PartyAPI.getParty(PAFPlayerManager.getInstance().getPlayer(p)) != null) {
-                    if(PartyAPI.getParty(PAFPlayerManager.getInstance().getPlayer(p)).getAllPlayers().size() != 1) {
-                        // Is in Party + Bonus
-                        //executeCommand("gexecute " + p.getServer().getInfo().getName() + " coins add " + p.getName() + " " + (int)(DEFAULT_COINS * PARTY_BONUS) + " -n");
+                if(PartyAPI.getParty(PAFPlayerManager.getInstance().getPlayer(p)) != null && PartyAPI.getParty(PAFPlayerManager.getInstance().getPlayer(p)).getAllPlayers().size() != 1) {
+                        p.sendMessage(messageParty);
 
-                        TextComponent message = new TextComponent("+" + (int)(DEFAULT_COINS * PARTY_BONUS) + " Coins");
-                        message.setColor(ChatColor.GOLD);
-                        TextComponent partyBonus = new TextComponent(" (Party Bonus)");
-                        partyBonus.setColor(ChatColor.GRAY);
-                        message.addExtra(partyBonus);
-                        int calculateParty = (int)(DEFAULT_COINS * PARTY_BONUS) - DEFAULT_COINS;
-                        message.setHoverEvent( new HoverEvent( HoverEvent.Action.SHOW_TEXT, new Text( ChatColor.GOLD + "+" + DEFAULT_COINS + " Coins (Playtime Bonus)\n" + ChatColor.GOLD + "+" + calculateParty + " Coins (Party Bonus)" ) ) );
+                        getProxy().getScheduler().runAsync(this, () -> {
+                            executeCommand("gexecute " + p.getServer().getInfo().getName() + " coins add " + p.getName() + " " + (int)(DEFAULT_COINS * PARTY_BONUS) + " -n");
+                        });
 
-                        p.sendMessage(message);
                         continue;
-                    }
                 }
-                    //Not in party + Default
-                //executeCommand("gexecute " + p.getServer().getInfo().getName() + " coins add " + p.getName() + " " + (int)(DEFAULT_COINS) + " -n");
-                executeCommand("gexecute " + p.getServer().getInfo().getName() + " coins add " + p.getName() + " 6 -n");
-                TextComponent message = new TextComponent("+" + (DEFAULT_COINS) + " Coins");
-                message.setColor(ChatColor.GOLD);
-                message.setHoverEvent( new HoverEvent( HoverEvent.Action.SHOW_TEXT, new Text( ChatColor.GOLD + "+" + DEFAULT_COINS + " Coins (Playtime Bonus)" ) ) );
+                getProxy().getScheduler().runAsync(this, () -> {
+                    executeCommand("gexecute " + p.getServer().getInfo().getName() + " coins add " + p.getName() + " " + (DEFAULT_COINS) + " -n");
+                });
+
                 p.sendMessage(message);
             }
         }, 0L, 10L, TimeUnit.MINUTES);
+
+
     }
 }
