@@ -115,6 +115,9 @@ public class Coins implements CommandExecutor {
             if (args.length == 0) {
                 // (/coins)
                 p.sendMessage(ChatColor.GRAY + "Your Network Coins: " + ChatColor.YELLOW + API.getCoins(p.getUniqueId().toString()));
+                if(!p.getWorld().getName().equalsIgnoreCase("Hub")) {
+                    return true;
+                }
                 TextComponent learnMore = new TextComponent("[Click here to learn more about Network Coins!]");
                 learnMore.setColor(net.md_5.bungee.api.ChatColor.GREEN);
                 learnMore.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(ChatColor.GRAY + "Click to view information about Coins!")));
